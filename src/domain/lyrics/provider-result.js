@@ -196,6 +196,11 @@ function stripParentheticalSuffix(value) {
 }
 
 /**
+ * Case-folds, removes Latin diacritics, and collapses everything except
+ * letters, numbers, and combining marks. Unicode classes keep non-Latin
+ * scripts (CJK, Cyrillic, Hangul, kana) matchable; combining marks preserve
+ * distinctions such as voiced kana (`ガ` vs `カ`).
+ *
  * @param {string | null | undefined} value
  * @returns {string}
  */
@@ -209,7 +214,7 @@ function normalizeComparable(value) {
     .toLowerCase()
     .replace(/[\u0300-\u036f]/gu, '')
     .replace(/&/gu, ' and ')
-    .replace(/[^a-z0-9]+/gu, ' ')
+    .replace(/[^\p{L}\p{N}\p{M}]+/gu, ' ')
     .trim()
     .replace(/\s+/gu, ' ');
 }

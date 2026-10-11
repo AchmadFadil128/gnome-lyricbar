@@ -1,0 +1,74 @@
+[
+  {
+    "id": 36308272,
+    "name": "晴天",
+    "trackName": "晴天",
+    "artistName": "周杰伦",
+    "albumName": "叶惠美 [JVR]",
+    "duration": 270,
+    "instrumental": false,
+    "hasWordSync": false,
+    "plainLyrics": "故事的小黃花\n從出生那年就飄著\n童年的盪鞦韆",
+    "syncedLyrics": "[00:29.36] 故事的小黃花\n[00:32.77] 從出生那年就飄著\n[00:36.15] 童年的盪鞦韆"
+  },
+  {
+    "id": 34994907,
+    "name": "晴天",
+    "trackName": "晴天",
+    "artistName": "周杰伦",
+    "albumName": "Optional(\"叶惠美\")",
+    "duration": 269,
+    "instrumental": false,
+    "hasWordSync": false,
+    "plainLyrics": "故事的小黃花\n從出生那年就飄著\n童年的盪鞦韆",
+    "syncedLyrics": "[00:29.36] 故事的小黃花\n[00:32.77] 從出生那年就飄著\n[00:36.15] 童年的盪鞦韆"
+  },
+  {
+    "id": 34622583,
+    "name": "晴天",
+    "trackName": "晴天",
+    "artistName": "周杰伦",
+    "albumName": "叶惠美",
+    "duration": 262,
+    "instrumental": false,
+    "hasWordSync": false,
+    "plainLyrics": "故事的小黃花\n從出生那年就飄著\n童年的盪鞦韆",
+    "syncedLyrics": "[00:29.36] 故事的小黃花\n[00:32.77] 從出生那年就飄著\n[00:36.15] 童年的盪鞦韆"
+  },
+  {
+    "id": 36847354,
+    "name": "晴天",
+    "trackName": "晴天",
+    "artistName": "周杰伦",
+    "albumName": "無與倫比演唱會 CD1",
+    "duration": 299,
+    "instrumental": false,
+    "hasWordSync": false,
+    "plainLyrics": "故事的小黃花\n從出生那年就飄著\n童年的盪鞦韆",
+    "syncedLyrics": "[00:29.36] 故事的小黃花\n[00:32.77] 從出生那年就飄著\n[00:36.15] 童年的盪鞦韆"
+  },
+  {
+    "id": 21529823,
+    "name": "鸿门宴",
+    "trackName": "鸿门宴",
+    "artistName": "胡彦斌",
+    "albumName": "Who Cares",
+    "duration": 225.985306,
+    "instrumental": false,
+    "hasWordSync": false,
+    "plainLyrics": "公元前二零六年 有場鴻門宴\n霸王項羽請客吃飯 想把劉邦暗算\n歲月荏苒 鏡頭一轉 又是一場鴻門宴",
+    "syncedLyrics": null
+  },
+  {
+    "id": 37219571,
+    "name": "作曲家",
+    "trackName": "作曲家",
+    "artistName": "李荣浩",
+    "albumName": "李荣浩",
+    "duration": 228,
+    "instrumental": false,
+    "hasWordSync": false,
+    "plainLyrics": "又很久没见\n你剪了长发\n谈怎么说话",
+    "syncedLyrics": "[00:09.68] 又很久没见\n[00:11.33] 你剪了长发\n[00:14.14] 谈怎么说话"
+  }
+]

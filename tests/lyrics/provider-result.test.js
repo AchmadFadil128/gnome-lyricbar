@@ -324,4 +324,183 @@ describe('parseBestSyncedLrclibSearchResponse', () => {
 
     expect(result).toBeNull();
   });
+
+  it('selects a synced candidate for a CJK artist and title', () => {
+    const result = parseBestSyncedLrclibSearchResponse(
+      [
+        {
+          trackName: '作曲家',
+          artistName: '李荣浩',
+          albumName: '李荣浩',
+          duration: 228,
+          syncedLyrics: '[00:09.68] 又很久没见',
+        },
+        {
+          trackName: '作曲家',
+          artistName: '其他歌手',
+          albumName: '',
+          duration: 228,
+          syncedLyrics: '[00:01.00] 别的歌词',
+        },
+      ],
+      {
+        artist: '李荣浩',
+        title: '作曲家',
+        album: '',
+        durationMs: 228000,
+      },
+    );
+
+    expect(result?.kind).toBe('synced');
+    if (result?.kind === 'synced') {
+      expect(result.track.trackName).toBe('作曲家');
+      expect(result.track.artistName).toBe('李荣浩');
+    }
+  });
+
+  it('selects a synced candidate for a Cyrillic artist and title', () => {
+    const result = parseBestSyncedLrclibSearchResponse(
+      [
+        {
+          trackName: 'Звезда',
+          artistName: 'Кино',
+          albumName: 'Последний герой',
+          duration: 210,
+          syncedLyrics: '[00:05.00] И снова',
+        },
+      ],
+      {
+        artist: 'Кино',
+        title: 'Звезда',
+        album: '',
+        durationMs: null,
+      },
+    );
+
+    expect(result?.kind).toBe('synced');
+    if (result?.kind === 'synced') {
+      expect(result.track.artistName).toBe('Кино');
+    }
+  });
+
+  it('selects a synced candidate for a Hangul artist and title', () => {
+    const result = parseBestSyncedLrclibSearchResponse(
+      [
+        {
+          trackName: '밤편지',
+          artistName: '아이유',
+          albumName: 'Palette',
+          duration: 253,
+          syncedLyrics: '[00:01.00] 이 밤 그날의 반딧불을',
+        },
+      ],
+      {
+        artist: '아이유',
+        title: '밤편지',
+        album: 'Palette',
+        durationMs: 253000,
+      },
+    );
+
+    expect(result?.kind).toBe('synced');
+    if (result?.kind === 'synced') {
+      expect(result.track.artistName).toBe('아이유');
+    }
+  });
+
+  it('keeps voiced and unvoiced kana distinct during artist matching', () => {
+    const query = { artist: 'ガガ', title: 'Song', album: '', durationMs: null };
+    /**
+     * @param {string} artistName
+     * @returns {Readonly<Record<string, unknown>>[]}
+     */
+    const candidates = (artistName) => [
+      {
+        trackName: 'Song',
+        artistName,
+        albumName: '',
+        duration: 180,
+        syncedLyrics: '[00:10.00] Line',
+      },
+    ];
+
+    const voiced = parseBestSyncedLrclibSearchResponse(candidates('ガガ'), query);
+    const unvoiced = parseBestSyncedLrclibSearchResponse(candidates('カカ'), query);
+
+    expect(voiced?.kind).toBe('synced');
+    expect(unvoiced).toBeNull();
+  });
+
+  it('still enforces the duration gate for non-Latin candidates', () => {
+    const result = parseBestSyncedLrclibSearchResponse(
+      [
+        {
+          trackName: '晴天',
+          artistName: '周杰伦',
+          albumName: '',
+          duration: 262,
+          syncedLyrics: '[00:29.36] 故事的小黃花',
+        },
+      ],
+      {
+        artist: '周杰伦',
+        title: '晴天',
+        album: '',
+        durationMs: 270000,
+      },
+    );
+
+    expect(result).toBeNull();
+  });
+
+  it('still rejects queries whose artist or title normalize to nothing', () => {
+    const candidates = [
+      {
+        trackName: 'Song',
+        artistName: 'Artist',
+        albumName: '',
+        duration: 180,
+        syncedLyrics: '[00:10.00] Line',
+      },
+    ];
+
+    expect(
+      parseBestSyncedLrclibSearchResponse(candidates, {
+        artist: '!!!',
+        title: 'Song',
+        album: '',
+        durationMs: null,
+      }),
+    ).toBeNull();
+    expect(
+      parseBestSyncedLrclibSearchResponse(candidates, {
+        artist: 'Artist',
+        title: '— —',
+        album: '',
+        durationMs: null,
+      }),
+    ).toBeNull();
+  });
+
+  it('keeps Latin diacritic folding during matching', () => {
+    const result = parseBestSyncedLrclibSearchResponse(
+      [
+        {
+          trackName: 'Ace of Spades',
+          artistName: 'Motorhead',
+          albumName: '',
+          duration: 160,
+          syncedLyrics: '[00:20.00] Line',
+        },
+      ],
+      {
+        artist: 'Motörhead',
+        title: 'Ace of Spades',
+        album: '',
+        durationMs: 160000,
+      },
+    );
+
+    expect(result?.kind).toBe('synced');
+  });
 });
