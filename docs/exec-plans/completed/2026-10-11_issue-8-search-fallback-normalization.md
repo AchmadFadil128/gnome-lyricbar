@@ -2,7 +2,7 @@
 
 Date: 2026-10-11  
 Owner: ahmad fikril  
-Status: active  
+Status: completed  
 Risk class: medium  
 Related issue/PR: [fikrilal/gnome-lyricbar#8](https://github.com/fikrilal/gnome-lyricbar/issues/8)  
 Proposal: `docs/engineering/_WIP/2026-10-11_issue-8-search-fallback-normalization.md`
@@ -101,9 +101,12 @@ Attempt status: Completed at the GJS provider level; nested Shell visual capture
 
 Implemented the Unicode-preserving scrub in `normalizeComparable()` (`src/domain/lyrics/provider-result.js`). Added seven contract tests covering CJK, Cyrillic, Hangul, kana voicing, the duration gate, empty-normalization rejection, and Latin diacritic folding in `tests/lyrics/provider-result.test.js`; added the captured-fixture regression suite `tests/lyrics/cjk-search-fallback-fixtures.test.js` with `tests/fixtures/lyrics/cjk-search-fallback.json`. Runtime evidence from the real provider under GJS against live LRCLIB confirms the issue-#8 fallback path now selects the correct synced candidate. `npm run verify` passes (36 files, 393 tests) and the rebuilt bundle contains the fix.
 
+Merged via PR #9, together with the dependency/CI refresh in PR #11. Released as v0.1.13 on 2026-10-11: the release workflow validated the tag, metadata version, and curated notes, and published `lyricbar@fikrilal.github.io.zip`.
+
 ## Follow-Ups
 
 - [x] File the duration-gate tracking issue (non-CJK failure class) — filed as #10.
 - [ ] Promote the `_WIP` proposal into the stable docs tree once stabilized.
 - [x] Record the stale-source-removal criticals (observed on disable) in `docs/exec-plans/tech-debt-tracker.md`.
 - [x] GitHub issue #8 response and PR #9 — commented and opened 2026-10-11.
+- [x] Release v0.1.13 — tagged and published 2026-10-11.
