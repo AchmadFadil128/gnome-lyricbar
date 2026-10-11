@@ -103,7 +103,7 @@ Implemented the Unicode-preserving scrub in `normalizeComparable()` (`src/domain
 
 ## Follow-Ups
 
-- [ ] File the duration-gate tracking issue (non-CJK failure class).
+- [x] File the duration-gate tracking issue (non-CJK failure class) — filed as #10.
 - [ ] Promote the `_WIP` proposal into the stable docs tree once stabilized.
 - [x] Record the stale-source-removal criticals (observed on disable) in `docs/exec-plans/tech-debt-tracker.md`.
-- [ ] GitHub issue #8 response and any PR — pending owner approval.
+- [x] GitHub issue #8 response and PR #9 — commented and opened 2026-10-11.
