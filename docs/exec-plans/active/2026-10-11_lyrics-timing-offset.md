@@ -97,6 +97,6 @@ Added the `lyrics-offset-ms` preference end to end: schema key (range `-5000..50
 
 ## Follow-Ups
 
-- [ ] Link the implementation PR in issue #12.
+- [x] Link the implementation PR in issue #12 — PR #13 opened 2026-10-11.
 - [ ] Promote the `_WIP` proposal into the stable docs tree once stabilized.
 - [ ] Record any new debt in `docs/exec-plans/tech-debt-tracker.md`.
