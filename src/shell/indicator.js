@@ -19,7 +19,26 @@ class LyricBarIndicatorBase extends PanelMenu.Button {
     super._init(0.0, 'LyricBar');
 
     this._preferencesAction = null;
-    this._preferencesButtonPressId = 0;
+
+    // GNOME Shell 50 toggles the panel menu through an internal
+    // Clutter.ClickGesture action that consumes the press before
+    // `button-press-event` handlers can run. Detach it and own the click so a
+    // single press opens preferences; the indicator menu itself is never used.
+    const builtInClickGesture = Reflect.get(this, '_clickGesture');
+    if (builtInClickGesture) {
+      this.remove_action(builtInClickGesture);
+    }
+
+    this._preferencesClickGesture = new Clutter.ClickGesture();
+    this._preferencesClickGesture.connect('recognize', () => {
+      const action = this._preferencesAction;
+      if (typeof action !== 'function') {
+        return Clutter.EVENT_PROPAGATE;
+      }
+      action();
+      return Clutter.EVENT_STOP;
+    });
+    this.add_action(this._preferencesClickGesture);
 
     this._lyricBarBox = new St.BoxLayout({
       style_class: 'panel-status-indicators-box lyricbar-container',
@@ -68,39 +87,17 @@ class LyricBarIndicatorBase extends PanelMenu.Button {
    * @returns {void}
    */
   setPreferencesAction(callback) {
-    this._disconnectPreferencesAction();
     this._preferencesAction = callback;
-
-    if (callback === null) {
-      return;
-    }
-
-    this._preferencesButtonPressId = this.connect('button-press-event', () => {
-      this._preferencesAction?.();
-      return true;
-    });
   }
 
   /** @override */
   destroy() {
-    this._disconnectPreferencesAction();
+    this._preferencesClickGesture = null;
     this._lyricBarLabel = null;
     this._lyricBarBin = null;
     this._lyricBarBox = null;
     this._preferencesAction = null;
     super.destroy();
-  }
-
-  /**
-   * @returns {void}
-   */
-  _disconnectPreferencesAction() {
-    if (this._preferencesButtonPressId === 0) {
-      return;
-    }
-    const signalId = /** @type {number} */ (this._preferencesButtonPressId);
-    this.disconnect(signalId);
-    this._preferencesButtonPressId = 0;
   }
 }
 

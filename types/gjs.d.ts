@@ -11,6 +11,11 @@ declare module 'gi://Clutter' {
       END: unknown;
       FILL: unknown;
     };
+    EVENT_PROPAGATE: boolean;
+    EVENT_STOP: boolean;
+    ClickGesture: new () => {
+      connect(signal: string, callback: (...args: any[]) => any): number;
+    };
   };
   export default Clutter;
 }
@@ -144,6 +149,8 @@ declare module 'resource:///org/gnome/shell/ui/panelMenu.js' {
     visible: boolean;
     constructor(menuAlignment?: number, nameText?: string | null, dontCreateMenu?: boolean);
     _init(menuAlignment: number, nameText?: string | null, dontCreateMenu?: boolean): void;
+    add_action(action: unknown): void;
+    remove_action(action: unknown): void;
     add_child(actor: unknown): void;
     add_style_class_name(name: string): void;
     destroy(): void;
