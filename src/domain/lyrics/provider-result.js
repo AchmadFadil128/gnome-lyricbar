@@ -54,7 +54,7 @@ export function parseLrclibResponse(value) {
 
   if (synced !== null) {
     const lines = parseLrc(synced);
-    if (lines.length > 0) {
+    if (lines.length > 0 && lines.some((line) => line.text.trim() !== '')) {
       return Object.freeze({
         kind: 'synced',
         track,
