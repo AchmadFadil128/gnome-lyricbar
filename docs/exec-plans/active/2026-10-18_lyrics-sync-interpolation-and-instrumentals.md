@@ -74,4 +74,3 @@ Result:
   - Mitigation: The 100ms timer only executes a fast binary/linear search and mathematical subtraction; if the selected lyric line string is identical to the current line, it returns immediately without DOM/St redraws.
 - Risk: Clock drift across long songs.
   - Mitigation: Every 500ms D-Bus poll re-anchors `basePositionMs` and `baseTimestampMs` whenever raw position advances, preventing local clock drift.
-
