@@ -52,7 +52,8 @@ Ensure tracks with synced lyrics available on LRCLIB (such as _Ghea Indrawari - 
 - [x] Update `src/runtime/lyrics/lrclib.js` to execute multi-tier free-text search fallback when field search yields no synced result and duration is known.
 - [x] Clean poisoned 503 cache files in `~/.cache/lyricbar/cache-v1/`.
 - [x] Run `npm run verify` and record evidence.
-- [ ] Report completion to user and request approval before installing.
+- [x] Report completion to user and request approval before installing.
+- [x] Install extension bundle to `~/.local/share/gnome-shell/extensions/` and compile gschemas.
 
 ## Decision Log
 

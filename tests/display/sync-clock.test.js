@@ -79,7 +79,34 @@ describe('sync-clock', () => {
     expect(getInterpolatedClockPosition(clock4, 22200)).toBe(12200);
   });
 
-  it('re-anchors when a seek occurs', () => {
+  it('does not pull clock position backward when receiving slightly delayed position samples', () => {
+    const clock1 = updateSyncedClock(null, {
+      trackKey: 'track-1',
+      rawPositionMs: 10000,
+      nowMs: 20000,
+      playbackStatus: 'Playing',
+    });
+
+    // Clock reaches 11000ms at nowMs = 21000.
+    expect(getInterpolatedClockPosition(clock1, 21000)).toBe(11000);
+
+    // Player poll returns 10900ms (100ms behind current clock estimate due to D-Bus latency).
+    const clock2 = updateSyncedClock(clock1, {
+      trackKey: 'track-1',
+      rawPositionMs: 10900,
+      nowMs: 21000,
+      playbackStatus: 'Playing',
+    });
+
+    // Base position and timestamp must not be pulled backward:
+    expect(clock2.basePositionMs).toBe(10000);
+    expect(clock2.baseTimestampMs).toBe(20000);
+    expect(clock2.lastSampledRawMs).toBe(10900);
+    expect(getInterpolatedClockPosition(clock2, 21000)).toBe(11000);
+    expect(getInterpolatedClockPosition(clock2, 21100)).toBe(11100);
+  });
+
+  it('re-anchors when a seek forward occurs', () => {
     const clock1 = updateSyncedClock(null, {
       trackKey: 'track-1',
       rawPositionMs: 10000,
@@ -98,6 +125,27 @@ describe('sync-clock', () => {
     expect(clock2.basePositionMs).toBe(60000);
     expect(clock2.baseTimestampMs).toBe(20500);
     expect(getInterpolatedClockPosition(clock2, 20600)).toBe(60100);
+  });
+
+  it('re-anchors backward when a seek backward occurs', () => {
+    const clock1 = updateSyncedClock(null, {
+      trackKey: 'track-1',
+      rawPositionMs: 50000,
+      nowMs: 20000,
+      playbackStatus: 'Playing',
+    });
+
+    // User seeks back to 10000ms (drift = 40000ms >= SEEK_DRIFT_THRESHOLD_MS)
+    const clock2 = updateSyncedClock(clock1, {
+      trackKey: 'track-1',
+      rawPositionMs: 10000,
+      nowMs: 20500,
+      playbackStatus: 'Playing',
+    });
+
+    expect(clock2.basePositionMs).toBe(10000);
+    expect(clock2.baseTimestampMs).toBe(20500);
+    expect(getInterpolatedClockPosition(clock2, 20600)).toBe(10100);
   });
 
   it('freezes position when playback transitions to Paused', () => {

@@ -16,6 +16,7 @@
  */
 
 const MAX_STALE_THROTTLE_WINDOW_MS = 10000;
+const SEEK_DRIFT_THRESHOLD_MS = 1500;
 
 /**
  * Initializes or updates an interpolated clock state based on a new position sample from MPRIS.
@@ -50,16 +51,43 @@ export function updateSyncedClock(state, input) {
 
   if (input.playbackStatus === 'Playing') {
     const currentEstimated = getInterpolatedClockPosition(state, input.nowMs);
-    const drift = Math.abs(rawPositionMs - currentEstimated);
+    const backwardDrift = currentEstimated - rawPositionMs;
+    const forwardDrift = rawPositionMs - currentEstimated;
 
     // If the player reported the identical raw position while playing, and drift is within
     // the throttle window, the player's MPRIS output is throttled (e.g. Limusic 2s push gate).
     // Maintain the running clock instead of pulling basePositionMs backward.
-    if (rawPositionMs === state.lastSampledRawMs && drift < MAX_STALE_THROTTLE_WINDOW_MS) {
+    if (
+      rawPositionMs === state.lastSampledRawMs &&
+      Math.abs(backwardDrift) < MAX_STALE_THROTTLE_WINDOW_MS
+    ) {
       return state;
     }
 
-    // Re-anchor to calibrate for minor drift or jump after seeking.
+    // A seek occurred (user jumped backward or forward significantly).
+    if (backwardDrift >= SEEK_DRIFT_THRESHOLD_MS || forwardDrift >= SEEK_DRIFT_THRESHOLD_MS) {
+      return Object.freeze({
+        trackKey: input.trackKey,
+        basePositionMs: rawPositionMs,
+        baseTimestampMs: input.nowMs,
+        lastSampledRawMs: rawPositionMs,
+        playbackStatus: input.playbackStatus,
+      });
+    }
+
+    // Minor backward latency / D-Bus sampling delay during continuous playback.
+    // Never pull the running clock backward as it causes lyric line oscillation around line boundaries.
+    if (backwardDrift > 0) {
+      return Object.freeze({
+        trackKey: input.trackKey,
+        basePositionMs: state.basePositionMs,
+        baseTimestampMs: state.baseTimestampMs,
+        lastSampledRawMs: rawPositionMs,
+        playbackStatus: input.playbackStatus,
+      });
+    }
+
+    // Normal forward advance or calibration.
     return Object.freeze({
       trackKey: input.trackKey,
       basePositionMs: rawPositionMs,

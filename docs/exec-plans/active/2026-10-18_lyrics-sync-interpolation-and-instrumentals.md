@@ -42,6 +42,8 @@ Eliminate lyric synchronization lag, jitter, and stuck lines during playback by:
 - [x] Update `src/domain/display/lyrics-state.js` so empty selected lyric lines return `{ kind: 'lyrics', line: '', track }`.
 - [x] Update tests in `tests/lyrics/lrc.test.js` and `tests/display/lyrics-state.test.js`.
 - [x] Integrate clock interpolation and sub-interval ticking into `src/runtime/controller.js`.
+- [x] Fix boundary jitter/oscillation: advance display via synced clock in `#pollSyncedPosition` instead of passing raw position directly.
+- [x] Protect interpolated clock against minor backward drift/latency while preserving seek detection.
 - [x] Run `npm run verify` and record results.
 
 ## Decision Log
@@ -49,6 +51,7 @@ Eliminate lyric synchronization lag, jitter, and stuck lines during playback by:
 - 2026-10-18: Keep D-Bus position poll at 500ms while running a 100ms local tick -> avoids flooding D-Bus while guaranteeing <100ms lyric transition response.
 - 2026-10-18: If the player reports the identical raw position between samples while `Playing`, do not reset monotonic base -> accommodates players with throttled media pushes like Limusic (2s throttle).
 - 2026-10-18: Empty timestamped lines (`[mm:ss.xx]`) represent lyrics clearance -> standard LRC behavior for instrumentals/interludes.
+- 2026-10-18: Eliminate session-fight oscillation at lyric boundary: `#pollSyncedPosition` must advance display using the interpolated clock (`#advanceSyncedLyrics`) rather than passing raw polled position (`effectivePositionMs`). Furthermore, `updateSyncedClock` ignores minor backward drift (`< 1500ms`) during active playback to prevent D-Bus sampling latency from pulling the monotonic clock backward across lyric timestamps.
 
 ## Verification
 
@@ -63,7 +66,7 @@ Result:
 - verify:docs, validate:metadata, validate:schema ok
 - check:architecture ok (domain stays platform-free)
 - format:check, lint, typecheck ok
-- vitest: 38 test files, 415 tests passed
+- vitest: 38 test files, 432 tests passed
 - build:extension built zip at dist/lyricbar@fikrilal.github.io.zip
 - validate:bundle verified metadata matches
 ```
@@ -73,4 +76,4 @@ Result:
 - Risk: High-frequency timeouts causing CPU drain in GNOME Shell.
   - Mitigation: The 100ms timer only executes a fast binary/linear search and mathematical subtraction; if the selected lyric line string is identical to the current line, it returns immediately without DOM/St redraws.
 - Risk: Clock drift across long songs.
-  - Mitigation: Every 500ms D-Bus poll re-anchors `basePositionMs` and `baseTimestampMs` whenever raw position advances, preventing local clock drift.
+  - Mitigation: Seek jumps and large drifts (>= 1500ms) re-anchor base position immediately, while continuous playback uses the monotonic hardware clock.

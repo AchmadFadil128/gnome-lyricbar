@@ -722,7 +722,7 @@ export class LyricBarController {
         playbackStatus: player.playbackStatus,
       });
 
-      this.#applySyncedDisplayPosition(player, lookup, effectivePositionMs, positionMs);
+      this.#advanceSyncedLyrics(nowMs);
     });
   }
 
