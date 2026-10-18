@@ -2,7 +2,7 @@
 
 Date: 2026-10-17  
 Owner: ahmad fikril  
-Status: active  
+Status: completed  
 Risk class: medium  
 Related issue/PR: [fikrilal/gnome-lyricbar#14](https://github.com/fikrilal/gnome-lyricbar/issues/14)
 
@@ -35,14 +35,15 @@ Restore "click the panel lyric to open preferences" (used when the settings icon
 - [x] Detach the built-in menu gesture and own the click with `Clutter.ClickGesture`.
 - [x] Reduce `setPreferencesAction()` to state assignment; drop the signal plumbing.
 - [x] Run `npm run verify`.
-- [ ] Owner runtime check on GNOME Shell 50 (Wayland).
-- [ ] Push branch and open PR after owner confirmation.
+- [ ] Owner post-install smoke check on GNOME Shell 50 (Wayland).
+- [x] Push branch and open PR — PR #15 merged 2026-10-18.
 
 ## Decision Log
 
 - 2026-10-17: Use the gesture swap (remove the internal gesture, add our own) instead of `captured-event` interception -> GNOME Shell 50's `panelMenu.js` consumes presses via `add_action(ClickGesture)`, verified in the installed shell; the same approach is field-proven for the identical regression in fthx/tasks-in-panel#15. `captured-event` target semantics could not be verified locally.
 - 2026-10-17: Do not re-attach the internal gesture when the preferences action is unset -> the menu is empty in every state, so the toggle is imperceptible; one code path avoids per-settings action juggling.
 - 2026-10-17: Extend `types/gjs.d.ts` for `Clutter.ClickGesture` and the PanelMenu action methods -> ambient declarations are the repo's established pattern for new API surface (same as the settings button style class).
+- 2026-10-18: Merged without waiting for the desktop check at the owner's direction -> the runtime smoke check moved to the v0.1.14 post-install verification instead of blocking the release.
 
 ## Verification
 
@@ -77,9 +78,9 @@ Required: this is Shell UI behavior that static checks cannot prove.
 
 ## Completion Notes
 
-Implemented and statically verified. Per the agreed workflow, the branch stays local and nothing is pushed until the owner confirms the runtime check on GNOME Shell 50.
+Implemented and statically verified. Merged as PR #15 and released as v0.1.14 on 2026-10-18; the owner post-install smoke check runs after updating.
 
 ## Follow-Ups
 
-- [ ] Push branch and open PR after owner runtime confirmation (issue #14).
-- [ ] Record any new debt in `docs/exec-plans/tech-debt-tracker.md`.
+- [x] Push branch and open PR — PR #15 merged 2026-10-18; released as v0.1.14.
+- [ ] Owner post-install smoke check on GNOME Shell 50 (Wayland): hide the settings icon, click the lyric, expect Preferences.

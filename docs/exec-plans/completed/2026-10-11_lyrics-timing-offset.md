@@ -2,7 +2,7 @@
 
 Date: 2026-10-11  
 Owner: ahmad fikril  
-Status: active  
+Status: completed  
 Risk class: medium  
 Related issue/PR: [fikrilal/gnome-lyricbar#12](https://github.com/fikrilal/gnome-lyricbar/issues/12)  
 Proposal: `docs/engineering/_WIP/2026-10-11_lyrics-timing-offset.md`
@@ -93,10 +93,10 @@ Attempt status: Completed at the schema and GJS module level; panel-level visual
 
 ## Completion Notes
 
-Added the `lyrics-offset-ms` preference end to end: schema key (range `-5000..5000`), domain normalization, settings adapter subscription, `applyLyricsOffset()` applied after browser normalization in the controller (with an immediate re-poll via `shouldRefreshSyncedLyrics`), preferences SpinRow, diagnostics row, README and troubleshooting updates. New tests cover normalization, offset math, display-level line shifts, adapter wiring, and the change predicate; `npm run verify` passes (37 files, 406 tests). Schema behavior was verified at runtime with an isolated keyfile backend against the compiled bundle schema, and module behavior was verified under GJS.
+Added the `lyrics-offset-ms` preference end to end: schema key (range `-5000..5000`), domain normalization, settings adapter subscription, `applyLyricsOffset()` applied after browser normalization in the controller (with an immediate re-poll via `shouldRefreshSyncedLyrics`), preferences SpinRow, diagnostics row, README and troubleshooting updates. New tests cover normalization, offset math, display-level line shifts, adapter wiring, and the change predicate; `npm run verify` passes (37 files, 406 tests). Schema behavior was verified at runtime with an isolated keyfile backend against the compiled bundle schema, and module behavior was verified under GJS. Merged as PR #13 and released as v0.1.14 on 2026-10-18.
 
 ## Follow-Ups
 
-- [x] Link the implementation PR in issue #12 — PR #13 opened 2026-10-11.
+- [x] Link the implementation PR in issue #12 — PR #13 merged 2026-10-18; released as v0.1.14.
+- [ ] Owner post-install smoke check: adjust the offset while a track plays and confirm the line shifts.
 - [ ] Promote the `_WIP` proposal into the stable docs tree once stabilized.
-- [ ] Record any new debt in `docs/exec-plans/tech-debt-tracker.md`.
